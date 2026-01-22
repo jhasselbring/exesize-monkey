@@ -1,0 +1,20 @@
+{
+  "name": "npx-cluster-size-suggestion",
+  "version": "0.1.0",
+  "description": "Suggest a cluster size based on directory contents",
+  "type": "module",
+  "bin": {
+    "npx-cluster-size-suggestion": "bin/cluster-size.js"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "npx",
+    "cli",
+    "cluster",
+    "size",
+    "suggestion"
+  ]
+}
