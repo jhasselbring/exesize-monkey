@@ -10,7 +10,7 @@ import {
 function printHelp() {
   console.log(`Usage: npx npx-cluster-size-suggestion [path]
 
-Suggest a cluster size based on file count and total size.
+Suggest a cluster size based on median file size.
 If no path is provided, the current directory is used.
 
 Options:
@@ -64,20 +64,32 @@ const targetPath = path.resolve(process.cwd(), targetArg || '.');
 
 analyzeTarget(targetPath)
   .then((stats) => {
-    const recommendation = recommendClusterSize(stats.totalBytes, stats.fileCount);
+    const recommendation = recommendClusterSize(
+      stats.medianBytes,
+      stats.p25Bytes,
+      stats.p75Bytes
+    );
     const averageBytes = stats.fileCount > 0
       ? Math.round(stats.totalBytes / stats.fileCount)
       : 0;
+    const medianBytes = stats.fileCount > 0
+      ? formatBytes(stats.medianBytes)
+      : 'N/A';
+    const rangeText = recommendation.range
+      ? `${formatBytes(recommendation.range.lowBytes)} to ${formatBytes(recommendation.range.highBytes)}`
+      : null;
+    const clusterText = `${formatBytes(recommendation.clusterBytes)}${rangeText ? ` (range ${rangeText})` : ''}`;
 
     const lines = [
       `Target: ${stats.targetPath}`,
       `Files scanned: ${formatCount(stats.fileCount)} (dirs: ${formatCount(stats.dirCount)}, unreadable: ${formatCount(stats.unreadableEntries)}, skipped symlinks: ${formatCount(stats.skippedSymlinks)})`,
       `Total size: ${formatBytes(stats.totalBytes)}`,
+      `Median file size: ${medianBytes}`,
       `Average file size: ${stats.fileCount > 0 ? formatBytes(averageBytes) : 'N/A'}`,
       `Largest file: ${stats.largestFilePath ? `${formatBytes(stats.largestFileBytes)} (${stats.largestFilePath})` : 'N/A'}`,
       '',
-      `Suggested cluster size: ${recommendation.clusterSize}`,
-      `Reason: size tier ${recommendation.sizeTier.label} (score ${recommendation.sizeTier.index}), file tier ${recommendation.fileTier.label} (score ${recommendation.fileTier.index}); ${recommendation.driver}.`
+      `Suggested cluster size: ${clusterText}`,
+      `Reason: ${recommendation.driver}`
     ];
 
     console.log(lines.join('\n'));
