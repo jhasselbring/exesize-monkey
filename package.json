@@ -2,6 +2,7 @@
   "name": "npx-cluster-size-suggestion",
   "version": "0.1.0",
   "description": "Suggest a cluster size based on directory contents",
+  "type": "module",
   "bin": {
     "npx-cluster-size-suggestion": "bin/cluster-size.js"
   },

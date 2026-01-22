@@ -1,13 +1,11 @@
 #!/usr/bin/env node
-'use strict';
-
-const path = require('path');
-const {
+import path from 'node:path';
+import {
   analyzeTarget,
   recommendClusterSize,
   formatBytes,
   formatCount
-} = require('../lib/analyze');
+} from '../lib/analyze.js';
 
 function printHelp() {
   console.log(`Usage: npx npx-cluster-size-suggestion [path]
